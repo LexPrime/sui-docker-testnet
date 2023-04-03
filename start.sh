@@ -62,7 +62,7 @@ if [[ ! -d $HOME/sui-docker-testnet ]]; then
   cd $HOME && git clone https://github.com/LexPrime/sui-docker-testnet
 else
   cd $HOME/sui-docker-testnet
-  git pull
+  git pull > /dev/null
 fi
 
 # Get docker-compose file
@@ -126,7 +126,7 @@ fi
 
 
 # Complete
-gum style --foreground 4 --align left --margin "1 1" "Setup complete! Sui-node version: $(docker exec -it sui-node sui-node -V | cut -d  ' ' -f 2)"
+gum style --foreground 4 --align left --margin "0 1" "Setup complete! Sui-node version: $(docker exec -it sui-node sui-node -V | cut -d  ' ' -f 2)"
 gum style --foreground 4 --align left --margin "1 1" "Check logs: docker logs -f sui-node"
 gum style --foreground 4 --align left --margin "1 1" "Check your sui node dashboard in your browser:"
 gum style --foreground 3 --align left --margin "0 1" "http://$(curl -s ifconfig.me):3555" "Login: admin" "Password: admin"
