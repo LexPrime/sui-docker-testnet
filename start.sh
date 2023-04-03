@@ -65,7 +65,7 @@ fi
 
 
 # Get docker-compose file
-cp -R $HOME/sui-docker-testnet/docker-compose.yaml > $HOME/.sui
+cp $HOME/sui-docker-testnet/docker-compose.yaml > $HOME/.sui
 
 
 # Create fullnode config file
