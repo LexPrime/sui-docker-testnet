@@ -2,5 +2,5 @@
 
 Simple script to setup sui fullnode
 
-```git clone https://github.com/LexPrime/sui-docker-testnet && cd sui-doocker-testnet && ./start.sh```
+```git clone https://github.com/LexPrime/sui-docker-testnet && cd sui-docker-testnet && ./start.sh```
 
