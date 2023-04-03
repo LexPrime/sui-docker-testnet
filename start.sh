@@ -63,9 +63,8 @@ if [[ ! -d $HOME/sui-docker-testnet ]]; then
   cd $HOME/.sui
 fi
 
-
 # Get docker-compose file
-cp $HOME/sui-docker-testnet/docker-compose.yaml > $HOME/.sui
+cp $HOME/sui-docker-testnet/docker-compose.yaml $HOME/.sui
 
 
 # Create fullnode config file
