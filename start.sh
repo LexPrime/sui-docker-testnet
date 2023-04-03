@@ -124,11 +124,13 @@ else
   docker-compose up -d
 fi
 
+
 # Complete
 gum style --foreground 4 --align left --margin "1 1" "Setup complete! Sui-node version: $(docker exec -it sui-node sui-node -V | cut -d  ' ' -f 2)"
-gum style --foreground 4 --align left --margin "1 1" "Check logs with docker logs -f sui-node"
+gum style --foreground 4 --align left --margin "1 1" "Check logs: docker logs -f sui-node"
 gum style --foreground 4 --align left --margin "1 1" "Check your sui node dashboard in your browser:"
-gum style --foreground 3 --align left --margin "1 1" --border double --border-foreground 3 "http://$(curl -s ifconfig.me):3555" "Login: admin" "Password: admin"
+gum style --foreground 3 --align left --margin "0 1" "http://$(curl -s ifconfig.me):3555" "Login: admin" "Password: admin"
+
 
 # Credits
 gum style --foreground 4 --border-foreground 4 --border double --bold --align center --width 50 --margin "2 20" --padding "1 1" 'Created by Lex_Prime from Darksiders Staking' 'Follow me:' 'Github: https://github.com/LexPrime' 'Twitter: https://twitter.com/Lex__Prime' 'Medium: https://medium.com/@lexprime' 'Telegram: https://t.me/darksiders_staking'
