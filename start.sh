@@ -123,8 +123,8 @@ fi
 # Complete
 gum style --foreground 4 --align left --margin "1 1" "Setup complete! What's next?"
 gum style --foreground 4 --align left --margin "1 1" "Check logs with docker logs -f sui-node"
-gum style --foreground 4 --align left --margin "1 1" "Go to your sui node dashboard in your browser http://$(curl -s ifconfig.me):3555 Login: admin Password: admin"
-
+gum style --foreground 4 --align left --margin "1 1" "Check your sui node dashboard in your browser:"
+gum style --foreground 3 --align left --margin "1 1" "http://$(curl -s ifconfig.me):3555" "Login: admin" "Password: admin" "Then change the password"
 
 # Credits
 gum style --foreground 4 --border-foreground 4 --border double --bold --align center --width 50 --margin "2 20" --padding "1 1" 'Created by Lex_Prime from Darksiders Staking' 'Follow me:' 'Github: https://github.com/LexPrime' 'Twitter: https://twitter.com/Lex__Prime' 'Medium: https://medium.com/@lexprime' 'Telegram: https://t.me/darksiders_staking'
