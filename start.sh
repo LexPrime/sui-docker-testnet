@@ -51,7 +51,7 @@ fi
 # Create main folder
 if [[ -d $HOME/.sui ]]; then
   cd $HOME/.sui
-  docker-compose down
+  docker-compose down > /dev/null
 else
   mkdir $HOME/.sui
 fi
@@ -116,6 +116,10 @@ cd $HOME/.sui
 
 if [[ $USER_PICK == "Install fullnode" ]]; then
   docker-compose up -d fullnode
+elif [[ $USER_PICK == "Upgrade fullnode" ]]; then
+  docker-compose stop fullnode
+  docker-compose pull
+  docker-compose up -d fullnode
 else
   if [[ ! -d $HOME/.sui/prometheus ]] || [[ ! -d $HOME/.sui/grafana ]]; then
     cp -R $HOME/sui-docker-testnet/prometheus $HOME/.sui
@@ -126,7 +130,7 @@ fi
 
 
 # Complete
-gum style --foreground 4 --align left --margin "0 1" "Setup complete! Sui-node version: $(docker exec -it sui-node sui-node -V | cut -d  ' ' -f 2)"
+gum style --foreground 4 --align left --margin "1 1" "Setup complete! Sui-node version: $(docker exec -it sui-node sui-node -V | cut -d  ' ' -f 2)"
 gum style --foreground 4 --align left --margin "1 1" "Check logs: docker logs -f sui-node"
 gum style --foreground 4 --align left --margin "1 1" "Check your sui node dashboard in your browser:"
 gum style --foreground 3 --align left --margin "0 1" "http://$(curl -s ifconfig.me):3555" "Login: admin" "Password: admin"
