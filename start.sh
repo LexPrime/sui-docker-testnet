@@ -2,6 +2,7 @@
 
 DOCKER_COMPOSE_VERSION="v2.17.0"
 
+
 # Install gum
 if [[ ! -x "$(command -v gum)" ]]; then
   sudo apt update && sudo apt install -y curl jq git > /dev/null
@@ -11,11 +12,19 @@ if [[ ! -x "$(command -v gum)" ]]; then
   sudo apt update && sudo apt install -y gum  > /dev/null
 fi
 
+
 # Title
 gum style --foreground 4 --border-foreground 4 --border double --bold --align center --width 50 --margin "2 20" --padding "1 1" 'SUI NODE INSTALLER' 'by Darksiders Staking'
 
+
 # Choose option
-USER_PICK=$(gum choose --cursor.foreground=4 "Install fullnode" "Install fullnode + monitoring")
+USER_PICK=$(gum choose --cursor.foreground=4 "Install only fullnode" "Install fullnode + monitoring" "Upgrade only fullnode" "Upgrade fullnode + monitoring" "Exit")
+
+
+# Exit check
+if [[ $USER_PICK == "Exit" ]]; then
+  exit 1
+fi
 
 
 # Install docker
@@ -32,7 +41,7 @@ if [[ ! -x "$(command -v docker)" ]]; then
   sudo apt-get install -y docker-ce docker-ce-cli containerd.io > /dev/null
   gum style --foreground 4 --align left --margin "1 1" "Done! $(docker --version)"
 else
-  gum style --foreground 4 --align left --margin "1 1" "Docker installed. $(docker --version)"
+  gum style --foreground 4 --align left --margin "0 1" "Docker installed. $(docker --version)"
 fi
 
 
@@ -44,18 +53,8 @@ if [[ ! -x "$(command -v docker-compose)" ]]; then
   sudo mv docker-compose /usr/local/bin
   gum style --foreground 4 --align left --margin "1 1" "Done! Docker-compose version: $(docker-compose --version | cut -d ' ' -f 4)"
 else
-  gum style --foreground 4 --align left --margin "1 1" "Docker-compose installed. Docker-compose version: $(docker-compose --version | cut -d ' ' -f 4)"
+  gum style --foreground 4 --align left --margin "0 1" "Docker-compose installed. Docker-compose version: $(docker-compose --version | cut -d ' ' -f 4)"
 fi
-
-
-# Create main folder
-if [[ -d $HOME/.sui ]]; then
-  cd $HOME/.sui
-  docker-compose down > /dev/null
-else
-  mkdir $HOME/.sui
-fi
-
 
 # Check repo
 if [[ ! -d $HOME/sui-docker-testnet ]]; then
@@ -64,6 +63,14 @@ else
   cd $HOME/sui-docker-testnet
   git pull > /dev/null
 fi
+
+
+# Check main folder
+if [[ ! -d $HOME/.sui ]]; then
+  mkdir $HOME/.sui
+fi
+cd $HOME/.sui
+
 
 # Get docker-compose file
 cp $HOME/sui-docker-testnet/docker-compose.yaml $HOME/.sui
@@ -104,36 +111,42 @@ p2p-config:
 EOF
 
 
-# Get genesis
-gum style --foreground 4 --align left --margin "1 1" "Downloading genesis..."
-curl -Ls https://github.com/MystenLabs/sui-genesis/raw/main/testnet/genesis.blob > $HOME/.sui/genesis.blob
-gum style --foreground 4 --align left --margin "1 1" "Done! Genesis shasum $(sha256sum $HOME/.sui/genesis.blob | cut -d ' ' -f 1)"
-
-
 # Create containers and start
 gum style --foreground 4 --align left --margin "1 1" "Creating services..."
-cd $HOME/.sui
 
-if [[ $USER_PICK == "Install fullnode" ]]; then
-  docker-compose up -d fullnode
-elif [[ $USER_PICK == "Upgrade fullnode" ]]; then
-  docker-compose stop fullnode
-  docker-compose pull
-  docker-compose up -d fullnode
-else
+if [[ $USER_PICK == "Install only fullnode" ]]; then
+  cp $HOME/sui-docker-testnet/docker-compose.node-only.yaml $HOME/.sui
+  docker-compose -f docker-compose.node-only.yaml up -d
+elif [[ $USER_PICK == "Upgrade only fullnode" ]]; then
+  docker-compose down > /dev/null
+  docker-compose pull > /dev/null
+  docker-compose -f docker-compose.node-only.yaml up -d
+elif [[ $USER_PICK == "Upgrade fullnode + monitoring" ]]; then
+  docker-compose down > /dev/null
+  docker-compose pull > /dev/null
+  docker-compose up -d
+elif [[ $USER_PICK == "Install fullnode + monitoring" ]]; then
   if [[ ! -d $HOME/.sui/prometheus ]] || [[ ! -d $HOME/.sui/grafana ]]; then
     cp -R $HOME/sui-docker-testnet/prometheus $HOME/.sui
     cp -R $HOME/sui-docker-testnet/grafana $HOME/.sui
   fi
   docker-compose up -d
+else
+  exit 1
 fi
+
+
+# Get genesis
+gum style --foreground 4 --align left --margin "0 1" "Downloading genesis..."
+curl -Ls https://github.com/MystenLabs/sui-genesis/raw/main/testnet/genesis.blob > $HOME/.sui/genesis.blob
+gum style --foreground 4 --align left --margin "0 1" "Done! Genesis shasum $(sha256sum $HOME/.sui/genesis.blob | cut -d ' ' -f 1)"
 
 
 # Complete
 gum style --foreground 4 --align left --margin "1 1" "Setup complete! Sui-node version: $(docker exec -it sui-node sui-node -V | cut -d  ' ' -f 2)"
-gum style --foreground 4 --align left --margin "1 1" "Check logs: docker logs -f sui-node"
-gum style --foreground 4 --align left --margin "1 1" "Check your sui node dashboard in your browser:"
-gum style --foreground 3 --align left --margin "0 1" "http://$(curl -s ifconfig.me):3555" "Login: admin" "Password: admin"
+gum style --foreground 4 --align left --margin "0 1" "Check logs: docker logs -f sui-node"
+gum style --foreground 4 --align left --margin "0 1" "Check your sui node dashboard in your browser:"
+gum style --foreground 3 --align left --margin "1 1" "http://$(curl -s ifconfig.me):3555" "Login: admin" "Password: admin"
 
 
 # Credits

@@ -1,0 +1,28 @@
+version: "3.9"
+
+volumes:
+  suidb:
+
+networks:
+  sui-net:
+    driver: bridge
+
+services:
+  fullnode:
+    image: lexprime/sui:latest
+    container_name: sui-node
+    restart: on-failure
+    ports:
+      - "8084:8084/udp"
+      - "9000:9000"
+      - "9184:9184"
+    expose:
+      - 9000
+      - 9184
+    networks:
+      - sui-net
+    volumes:
+      - ./fullnode-template.yaml:/sui/fullnode.yaml:ro
+      - ./genesis.blob:/sui/genesis.blob:ro
+      - suidb:/sui/db:rw
+    command: ["/usr/local/bin/sui-node", "--config-path", "fullnode.yaml"]
